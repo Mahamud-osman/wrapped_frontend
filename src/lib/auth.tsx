@@ -16,7 +16,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for token in localStorage on mount
     const storedToken = localStorage.getItem('spotify_token');
     const storedUser = localStorage.getItem('spotify_user');
-    
+    //comment
     if (storedToken) {
       setToken(storedToken);
       setAuthToken(storedToken);
