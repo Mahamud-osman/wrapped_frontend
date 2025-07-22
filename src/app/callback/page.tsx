@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function Callback() {
+function CallbackContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Processing authentication...');
@@ -63,5 +63,24 @@ export default function Callback() {
         )}
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-green-500 mx-auto mb-4"></div>
+        <p className="text-xl">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function Callback() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <CallbackContent />
+    </Suspense>
   );
 }
