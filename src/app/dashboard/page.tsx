@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import PersonalityBreakdown from '@/components/PersonalityBreakdown';
 import AudioFeaturesRadar from '@/components/AudioFeaturesRadar';
 import GenreDistribution from '@/components/GenreDistribution';
@@ -54,7 +55,7 @@ interface PersonalityScore {
   traits: string[];
 }
 
-export default function Dashboard() {
+function DashboardContent() {
   const [user, setUser] = useState<SpotifyUser | null>(null);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
@@ -65,18 +66,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('spotify_token');
-    const tokenExpiry = localStorage.getItem('spotify_token_expiry');
     
-    // Check if token exists and is not expired
-    if (!token || !tokenExpiry || Date.now() > parseInt(tokenExpiry)) {
-      // Token is missing or expired, clear storage and redirect to login
-      localStorage.removeItem('spotify_token');
-      localStorage.removeItem('spotify_token_expiry');
-      localStorage.removeItem('spotify_user');
-      window.location.href = '/';
-      return;
-    }
-
     // Fetch user data from API
     const fetchUserData = async () => {
       try {
@@ -143,13 +133,14 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">✗</div>
-          <p className="text-xl mb-4">{error}</p>
+          <div className="text-green-500 text-6xl mb-4">🎵</div>
+          <h1 className="text-4xl font-bold mb-4 text-green-400">Spotify Wrapped So Far</h1>
+          <p className="text-xl mb-6 text-gray-300">{error}</p>
           <button
-            onClick={handleLogout}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => window.location.href = '/'}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-colors duration-200"
           >
-            Try Again
+            Connect with Spotify
           </button>
         </div>
       </div>
@@ -371,5 +362,13 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }
