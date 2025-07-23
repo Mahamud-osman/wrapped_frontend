@@ -71,6 +71,7 @@ function DashboardContent() {
     // Fetch user data from API
     const fetchUserData = async () => {
       try {
+        console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
         const headers = { 'Authorization': `Bearer ${token}` };
         
         // Fetch user profile, top artists, and top tracks first
@@ -86,7 +87,9 @@ function DashboardContent() {
 
         // Try to fetch stats separately with error handling
         try {
+          console.log('Fetching stats data...');
           const statsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/stats`, { headers });
+          console.log('Stats response:', statsResponse.data);
           setUserStats(statsResponse.data);
         } catch (statsError) {
           console.error('Failed to fetch stats:', statsError);
@@ -95,7 +98,9 @@ function DashboardContent() {
 
         // Try to fetch personality data
         try {
+          console.log('Fetching personality data...');
           const personalityResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/personality`, { headers });
+          console.log('Personality response:', personalityResponse.data);
           setPersonalityData(personalityResponse.data.personality_breakdown);
         } catch (personalityError) {
           console.error('Failed to fetch personality data:', personalityError);
