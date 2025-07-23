@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import PersonalityBreakdown from '@/components/PersonalityBreakdown';
+import AudioFeaturesRadar from '@/components/AudioFeaturesRadar';
+import GenreDistribution from '@/components/GenreDistribution';
 
 interface SpotifyUser {
   id: string;
@@ -44,11 +47,19 @@ interface UserStats {
   mood_score: number;
 }
 
+interface PersonalityScore {
+  category: string;
+  percentage: number;
+  description: string;
+  traits: string[];
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState<SpotifyUser | null>(null);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [personalityData, setPersonalityData] = useState<PersonalityScore[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,6 +100,15 @@ export default function Dashboard() {
         } catch (statsError) {
           console.error('Failed to fetch stats:', statsError);
           // Continue without stats - they're optional
+        }
+
+        // Try to fetch personality data
+        try {
+          const personalityResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/personality`, { headers });
+          setPersonalityData(personalityResponse.data.personality_breakdown);
+        } catch (personalityError) {
+          console.error('Failed to fetch personality data:', personalityError);
+          // Continue without personality data - it's optional
         }
         setLoading(false);
       } catch (err) {
@@ -167,6 +187,21 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Music Personality Section */}
+        {personalityData && personalityData.length > 0 && (
+          <PersonalityBreakdown personalityData={personalityData} />
+        )}
+
+        {/* Audio Features Section */}
+        {userStats && userStats.average_features && (
+          <AudioFeaturesRadar audioFeatures={userStats.average_features} />
+        )}
+
+        {/* Genre Distribution Section */}
+        {userStats && userStats.top_genres && userStats.top_genres.length > 0 && (
+          <GenreDistribution genres={userStats.top_genres} />
+        )}
 
         {/* Stats Section */}
         {userStats && (
