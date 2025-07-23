@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface PersonalityScore {
   category: string;
@@ -58,7 +58,7 @@ export default function PersonalityBreakdown({ personalityData }: PersonalityBre
     traits: item.traits
   }));
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; value: number; category: string; description: string } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -74,7 +74,9 @@ export default function PersonalityBreakdown({ personalityData }: PersonalityBre
     return null;
   };
 
-  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const renderCustomLabel = (props: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number }) => {
+    if (!props || typeof props.percent !== 'number' || typeof props.cx !== 'number' || typeof props.cy !== 'number' || typeof props.midAngle !== 'number' || typeof props.innerRadius !== 'number' || typeof props.outerRadius !== 'number') return null;
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
     if (percent < 0.05) return null; // Don't show labels for very small slices
     
     const RADIAN = Math.PI / 180;
@@ -132,7 +134,7 @@ export default function PersonalityBreakdown({ personalityData }: PersonalityBre
 
         {/* Personality Breakdown */}
         <div className="space-y-4">
-          {personalityData.map((personality, index) => (
+          {personalityData.map((personality) => (
             <div key={personality.category} className="bg-gray-700 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface Genre {
   genre: string;
@@ -29,10 +29,10 @@ export default function GenreDistribution({ genres }: GenreDistributionProps) {
   const topGenres = genres.slice(0, 8);
   const otherCount = genres.slice(8).reduce((sum, genre) => sum + genre.count, 0);
   
-  let chartData = [...topGenres];
-  if (otherCount > 0) {
-    chartData.push({ genre: 'Others', count: otherCount });
-  }
+  const baseChartData = [...topGenres];
+  const chartData = otherCount > 0 
+    ? [...baseChartData, { genre: 'Others', count: otherCount }]
+    : baseChartData;
 
   // Calculate total for percentages
   const total = chartData.reduce((sum, item) => sum + item.count, 0);
@@ -43,7 +43,7 @@ export default function GenreDistribution({ genres }: GenreDistributionProps) {
     percentage: ((item.count / total) * 100).toFixed(1)
   }));
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { genre: string; count: number; percentage: string } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -57,7 +57,9 @@ export default function GenreDistribution({ genres }: GenreDistributionProps) {
     return null;
   };
 
-  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const renderCustomLabel = (props: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number }) => {
+    if (!props || typeof props.percent !== 'number' || typeof props.cx !== 'number' || typeof props.cy !== 'number' || typeof props.midAngle !== 'number' || typeof props.innerRadius !== 'number' || typeof props.outerRadius !== 'number') return null;
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
     if (percent < 0.05) return null; // Don't show labels for very small slices
     
     const RADIAN = Math.PI / 180;
@@ -137,7 +139,7 @@ export default function GenreDistribution({ genres }: GenreDistributionProps) {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {dataWithPercentages.map((entry, index) => (
+                  {dataWithPercentages.map((_, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={GENRE_COLORS[index % GENRE_COLORS.length]} 

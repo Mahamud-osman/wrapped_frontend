@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface AudioFeaturesProps {
   audioFeatures: Record<string, number>;
@@ -55,7 +55,7 @@ export default function AudioFeaturesRadar({ audioFeatures }: AudioFeaturesProps
     }
   ];
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { feature: string; value: number; description: string } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (

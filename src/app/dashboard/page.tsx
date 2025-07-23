@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import PersonalityBreakdown from '@/components/PersonalityBreakdown';
 import AudioFeaturesRadar from '@/components/AudioFeaturesRadar';
@@ -165,10 +166,12 @@ function DashboardContent() {
         <div className="bg-gray-900 rounded-lg p-6 mb-6">
           <div className="flex items-center space-x-4">
             {user.images.length > 0 && (
-              <img
+              <Image
                 src={user.images[0].url}
                 alt={user.display_name}
-                className="w-20 h-20 rounded-full"
+                width={80}
+                height={80}
+                className="w-20 h-20 rounded-full object-cover"
               />
             )}
             <div>
@@ -307,9 +310,11 @@ function DashboardContent() {
               <div key={artist.id} className="bg-gray-800 rounded-lg p-4 text-center">
                 <div className="text-green-400 font-bold text-lg mb-2">#{index + 1}</div>
                 {artist.images.length > 0 && (
-                  <img
+                  <Image
                     src={artist.images[0].url}
                     alt={artist.name}
+                    width={96}
+                    height={96}
                     className="w-24 h-24 rounded-full mx-auto mb-3 object-cover"
                   />
                 )}
@@ -335,9 +340,11 @@ function DashboardContent() {
                   #{index + 1}
                 </div>
                 {track.album.images.length > 0 && (
-                  <img
+                  <Image
                     src={track.album.images[0].url}
                     alt={track.album.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded ml-4 mr-4 object-cover"
                   />
                 )}
