@@ -91,8 +91,11 @@ function DashboardContent() {
           const statsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/stats`, { headers });
           console.log('Stats response:', statsResponse.data);
           setUserStats(statsResponse.data);
-        } catch (statsError) {
+        } catch (statsError: any) {
           console.error('Failed to fetch stats:', statsError);
+          if (statsError.response) {
+            console.error('Stats error response:', statsError.response.status, statsError.response.data);
+          }
           // Continue without stats - they're optional
         }
 
@@ -102,8 +105,11 @@ function DashboardContent() {
           const personalityResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/personality`, { headers });
           console.log('Personality response:', personalityResponse.data);
           setPersonalityData(personalityResponse.data.personality_breakdown);
-        } catch (personalityError) {
+        } catch (personalityError: any) {
           console.error('Failed to fetch personality data:', personalityError);
+          if (personalityError.response) {
+            console.error('Personality error response:', personalityError.response.status, personalityError.response.data);
+          }
           // Continue without personality data - it's optional
         }
         setLoading(false);
